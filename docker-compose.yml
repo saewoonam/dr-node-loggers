@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  backend:
+    image: node:lts-slim
+    working_dir: "/app/compressor_only"
+    user: "${UID}:${GID}"
+    environment:
+      - REDIS=redis
+    command: yarn dev
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    network_mode: host
+
+  redis:
+    image: my-redis-ts
+    # command: redis-server --appendonly yes --loadmodule /usr/lib/redis/modules/redistimeseries.so --save 60 1
+    command: redis-server --loadmodule /usr/lib/redis/modules/redistimeseries.so --save 60 1
+    ports:
+      - 6379:6379
+    volumes:
+    - ./redis-volume:/data
